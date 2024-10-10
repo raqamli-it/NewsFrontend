@@ -68,7 +68,8 @@ export const NavItems = styled.div`
   @media (max-width: 690px) {
     flex-direction: column;
     gap: 10px;
-    display: ${({ isOpen }) => (isOpen ? "flex" : "none")}; /* Toggle visibility */
+    display: ${({ isOpen }) =>
+      isOpen ? "flex" : "none"}; /* Toggle visibility */
     width: 100%; /* Full width on mobile */
     background-color: #fff;
     position: absolute;
@@ -100,8 +101,11 @@ export const RightSection = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  @media (max-width: 600px){
+  @media (max-width: 600px) {
     margin-top: 15px;
+  }
+  @media (max-width: 395px) {
+    gap: 5px;
   }
 `;
 
@@ -118,7 +122,7 @@ export const NavButton = styled(RouterLink)`
   &:hover {
     background-color: #333;
   }
-  @media (max-width: 500px){
+  @media (max-width: 500px) {
     padding: 10px 5px;
   }
 `;
@@ -162,7 +166,9 @@ export const LanguageSelect = styled.select`
   border: 1px solid #ccc;
   background-color: #fff;
   font-size: 16px;
-
+  @media (max-width: 395px) {
+    margin-right: 10px;
+  }
   &:focus {
     border-color: #007bff;
   }
@@ -195,10 +201,12 @@ export const HamburgerIcon = styled.div`
   display: none;
   cursor: pointer;
   font-size: 24px;
-
   @media (max-width: 690px) {
     display: block;
     margin-right: 50px;
+  }
+  @media (max-width: 395px) {
+    margin-right: 15px;
   }
 `;
 
@@ -217,23 +225,23 @@ export const MobileMenu = styled.div`
   @media (max-width: 690px) {
     display: flex;
     a {
-    text-decoration: none;
-    color: #000;
-    font-size: 16px;
-    position: relative;
-    text-align: center;
-    margin-top: 15px;
-    &.active {
-      color: red;
-    }
+      text-decoration: none;
+      color: #000;
+      font-size: 16px;
+      position: relative;
+      text-align: center;
+      margin-top: 15px;
+      &.active {
+        color: red;
+      }
 
-    &:hover {
-      color: #333;
+      &:hover {
+        color: #333;
+      }
     }
-  }
-  .NewsNavDrp{
-    text-align: center;
-    margin-top: 15px;
-  }
+    .NewsNavDrp {
+      text-align: center;
+      margin-top: 15px;
+    }
   }
 `;
