@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import {
@@ -11,14 +11,16 @@ import {
   BigNewsItem,
   BigNewsTitle,
   LastConta,
-  CardContainer,  // Adding a new styled component for cards
+  CardContainer,
   Card,
   CardImage,
   CardTitle,
+  SectionTitle // Adding styled component for section title
 } from './styled';
 
 const Home = ({ language }) => {
   const { data, loading, error } = useFetch(`/sud/?lang=${language}`);
+  const [visibleCards, setVisibleCards] = useState(3); // Start with 3 visible cards
 
   useEffect(() => {
     console.log("Selected Language:", language);
@@ -46,10 +48,15 @@ const Home = ({ language }) => {
     }
   };
 
+  const loadMoreCards = () => {
+    setVisibleCards(prev => prev + 3); // Show 3 more cards each time
+  };
+
   return (
     <Container>
       <NewsContainer>
         <LatestNewsSection>
+      <SectionTitle>So'nggi Yangiliklar</SectionTitle>
           {latestNews.map((news) => (
             <BigNewsItem key={news.id}>
               <Link to={`/sud/${news.id}`}>
@@ -61,6 +68,7 @@ const Home = ({ language }) => {
         </LatestNewsSection>
 
         <OtherNewsContainer>
+           {/* Adding section title */}
           {firstFiveNews.map((news) => (
             <NewsItem key={news.id}>
               <Link to={`/sud/${news.id}`}>
@@ -74,8 +82,8 @@ const Home = ({ language }) => {
 
       <NewsContainer>
         <LastConta>
-          <CardContainer> {/* Wrapping remaining news in a card container */}
-            {remainingNews.map((news) => (
+          <CardContainer>
+            {remainingNews.slice(0, visibleCards).map((news) => (
               <Card key={news.id}>
                 <Link to={`/sud/${news.id}`}>
                   <CardImage src={news.image} alt={getFieldByLanguage(news, 'title')} />
@@ -84,6 +92,9 @@ const Home = ({ language }) => {
               </Card>
             ))}
           </CardContainer>
+          {visibleCards < remainingNews.length && (
+            <button onClick={loadMoreCards}>Load More</button>
+          )}
         </LastConta>
       </NewsContainer>
     </Container>
