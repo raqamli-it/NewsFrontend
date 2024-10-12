@@ -80,6 +80,9 @@ export const NewsItem = styled.div`
    @media (max-width: 860px){
       font-size: 10px;
    }
+   @media (max-width: 1280px){
+      font-size: 10px;
+   }
    @media (max-width: 600px){
       font-size: 15px;
    }

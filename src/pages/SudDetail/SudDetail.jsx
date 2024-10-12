@@ -4,15 +4,13 @@ import useFetch from "../../hooks/useFetch";
 import {
   Container,
   ContentWrapper,
-  LiveBadge,
   VideoSection,
-  WatchLiveButton,
-  Title,
   Form,
   Input,
   Button,
   ErrorMessage,
-  CommentIcon, // Import your comment icon styled component
+  CommentIcon,
+  Title,
 } from "./styled";
 
 const SudDetail = ({ language }) => {
@@ -24,25 +22,39 @@ const SudDetail = ({ language }) => {
   const [displayedComments, setDisplayedComments] = useState(3); // State to manage how many comments to display
   const [commentsVisible, setCommentsVisible] = useState(false); // State for toggling comments visibility
 
+  // Get registered user's name from localStorage
+
+  // Function to handle comment submission
   // Function to handle comment submission
   const handleCommentSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
-    const newComment = { comment }; // Store the new comment in JSON format
+    const newComment = { comment }; // Include user name with the comment
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/sud/${id}/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Send data in JSON format
-        },
-        body: JSON.stringify(newComment), // Send the comment in JSON format
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/sud/${id}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Send data in JSON format
+          },
+          body: JSON.stringify(newComment), // Send the comment in JSON format
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Error submitting comment:", response.statusText, errorData);
-        setErrorMsg(`Error submitting comment: ${errorData.detail || 'Please check your input.'}`);
+        console.error(
+          "Error submitting comment:",
+          response.statusText,
+          errorData
+        );
+        setErrorMsg(
+          `Error submitting comment: ${
+            errorData.detail || "Please check your input."
+          }`
+        );
       } else {
         const updatedData = await response.json();
         setComments((prevComments) => [...prevComments, updatedData]); // Add the new comment to the list
@@ -51,7 +63,7 @@ const SudDetail = ({ language }) => {
       }
     } catch (err) {
       console.error("An error occurred:", err);
-      setErrorMsg('An error occurred. Please try again later.');
+      setErrorMsg("An error occurred. Please try again later.");
     }
   };
 
@@ -76,10 +88,10 @@ const SudDetail = ({ language }) => {
   if (error) return <p>Error occurred: {error}</p>; // Show error state
 
   // Retrieve title and content based on selected language
-  const title = language === 'ru' ? data.title_ru : data.title_uz;
-  const subtitle = language === 'ru' ? data.subtitle_ru : data.subtitle_uz;
-  const content = language === 'ru' ? data.content_ru : data.content_uz;
-  const time = language === 'ru' ? data.time_ru : data.time_uz;
+  const title = language === "ru" ? data.title_ru : data.title_uz;
+  const subtitle = language === "ru" ? data.subtitle_ru : data.subtitle_uz;
+  const content = language === "ru" ? data.content_ru : data.content_uz;
+  const time = language === "ru" ? data.time_ru : data.time_uz;
 
   return (
     <Container>
@@ -106,29 +118,23 @@ const SudDetail = ({ language }) => {
                 allowFullScreen
               ></iframe>
             ) : (
-              <p> </p>
+              <p>No video available</p>
             )}
           </VideoSection>
           <p>{subtitle}</p>
-          
-          <p dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br />') }}></p>
+
+          <p
+            dangerouslySetInnerHTML={{
+              __html: content.replace(/\n/g, "<br />"),
+            }}
+          ></p>
 
           {/* Comment submission form */}
-          <Form onSubmit={handleCommentSubmit}>
-            <Input
-              type="text"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Enter your comment"
-              required
-            />
-            <Button type="submit">Submit Comment</Button>
-          </Form>
-          {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
 
           {/* Comment icon to toggle visibility */}
           <CommentIcon onClick={toggleCommentsVisibility}>
-           Comments 🗨️ {/* Replace this with an actual icon component if available */}
+            Comments 🗨️{" "}
+            {/* Replace this with an actual icon component if available */}
           </CommentIcon>
 
           {/* Comments section */}
@@ -137,16 +143,32 @@ const SudDetail = ({ language }) => {
               {comments.slice(0, displayedComments).length > 0 ? (
                 comments.slice(0, displayedComments).map((c, index) => (
                   <div key={index}>
-                    <p><strong>USER:</strong> {c.comment}</p>
+                    <p>
+                      <strong>{c.full_name || "Guest"}:</strong> {c.comment}
+                    </p>
                     <small>{new Date(c.created_at).toLocaleString()}</small>
                   </div>
                 ))
               ) : (
                 <p>No comments yet</p>
               )}
+
               {displayedComments < comments.length && (
-                <Button onClick={handleShowMoreComments}>Show More Comments</Button>
+                <Button onClick={handleShowMoreComments}>
+                  Show More Comments
+                </Button>
               )}
+              <Form onSubmit={handleCommentSubmit}>
+                <Input
+                  type="text"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Enter your comment"
+                  required
+                />
+                <Button type="submit">Submit Comment</Button>
+              </Form>
+              {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
             </div>
           )}
         </>

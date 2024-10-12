@@ -12,7 +12,7 @@ const Navbar = ({ user, setUser, onLanguageChange }) => {
   const [searchQuery, setSearchQuery] = useState(""); 
   const [menuOpen, setMenuOpen] = useState(false); // State for hamburger menu
   const navigate = useNavigate(); 
-  const { data: newsArticles, loading, error } = useFetch('/news/');
+  const { data: newsArticles, loading, error } = useFetch('/category/');
 
   const handleLogout = async () => {
     try {
@@ -45,7 +45,7 @@ const Navbar = ({ user, setUser, onLanguageChange }) => {
   const handleSearchInputChange = (e) => {
     setSearchQuery(e.target.value);
   };
-
+  const name =localStorage.getItem('userName')
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -93,7 +93,7 @@ const Navbar = ({ user, setUser, onLanguageChange }) => {
                     <DropdownItem 
                       key={article.id}
                       id={article.id}
-                      title={article.title_uz} 
+                      title={article.name_uz} 
                       onClick={toggleDropdown}
                     />
                   ))
@@ -113,7 +113,7 @@ const Navbar = ({ user, setUser, onLanguageChange }) => {
           </LanguageSelect> 
           {user ? (
             <>
-              <span style={{ marginRight: '10px' }}>Xush kelibsiz, {user.phone}</span>
+              <span style={{ marginRight: '10px', marginTop: '7px'}}>Xush kelibsiz, {name}</span>
               <NavButton onClick={handleLogout}>Logout</NavButton>
             </>
           ) : (

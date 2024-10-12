@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // React Router bilan ishlash
+import { useNavigate } from 'react-router-dom';
 import { Container, Form, Input, Button, ErrorMessage, SuccessMessage } from './styled'; // styled-components dan import
 
 const Register = () => {
-  const navigate = useNavigate(); // Yo'naltirish uchun
+  const navigate = useNavigate();
   const [nom, setName] = useState(''); // To'liq ism
   const [parol, setPassword] = useState(''); // Parol
   const [password2, setPassword2] = useState(''); // Parolni tasdiqlash
-  const [telefon, setPhone] = useState(''); // Telefon
+  const [telefon, setPhone] = useState(''); // Telefon raqam
   const [loading, setLoading] = useState(false); // Yuklanish holati
   const [xato, setError] = useState(null); // Xato holati
-  const [malumotlar, setData] = useState(null); // Muvaffaqiyatli ma'lumotlar
+  const [malumotlar, setData] = useState(null); // Muvaffaqiyatli ro'yxatdan o'tgan foydalanuvchi ma'lumotlari
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +39,10 @@ const Register = () => {
       const natija = await javob.json();
       setData(natija);
 
-      // Muvaffaqiyatli ro'yxatdan o'tgandan so'ng login sahifasiga yo'naltirish
+      // Foydalanuvchi nomini localStorage'ga saqlash
+      localStorage.setItem('userName', nom);
+
+      // Login sahifasiga yo'naltirish
       navigate('/login');
     } catch (err) {
       setError(err.message);

@@ -26,17 +26,17 @@ const Login = ({ setUser }) => {
 
         if (response.ok) {
             const data = await response.json();
-            console.log('Login successful, access token:', data.access);
+            console.log('Login muvaffaqiyatli, access token:', data.access);
 
             // Tokenlarni saqlash
-            localStorage.setItem('access_token', data.access); // Tokenni saqlash
+            localStorage.setItem('access_token', data.access);
             localStorage.setItem('refresh_token', data.refresh);
 
             // Foydalanuvchi ma'lumotlarini saqlash
             const userData = {
                 phone: phone,
             };
-            setUser(userData); // Foydalanuvchi ma'lumotlarini uzatish
+            setUser(userData); // Foydalanuvchini o'rnatish
 
             // Asosiy sahifaga yo'naltirish
             navigate('/');
@@ -47,8 +47,7 @@ const Login = ({ setUser }) => {
         console.error('Login jarayonida xato:', error);
         setError('Xato yuz berdi. Keyinroq qayta urinib ko\'ring.');
     }
-};
-
+  };
 
   return (
     <Container>

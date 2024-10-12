@@ -231,5 +231,5 @@ const NewsDetail = ({ language }) => {
     </Container>
   );
 };
-
+  
 export default NewsDetail;

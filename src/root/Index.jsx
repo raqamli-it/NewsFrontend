@@ -17,6 +17,7 @@ function Root() {
     const accessToken = localStorage.getItem('access_token');
     if (accessToken) {
       setUser({ phone: ' ' });
+      setUser({full_name: ' '})
     }
   }, []);
 
@@ -35,7 +36,7 @@ function Root() {
       <Navbar onLanguageChange={handleLanguageChange} user={user} setUser={setUser} onLogout={handleLogout} />
       <Routes>
         <Route path="/yangilik_sub/:id" element={< NewsDetail language={language} />} />
-        <Route path="/sud/:id" element={<SudDetail language={language} />} />
+        <Route path="/sud/:id" element={<SudDetail userA={user} language={language} />} />
         <Route path="/jurnalistik/:id" element={<JurnalistDetal language={language} />} />
         <Route path="/" element={<Navigate to="/sud" replace />} />
         <Route path="/login" element={<Login setUser={setUser} />} />

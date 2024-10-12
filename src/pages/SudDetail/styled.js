@@ -140,6 +140,7 @@ export const Form = styled.form`
   flex-direction: column;
   gap: 15px;
   margin-bottom: 20px;
+  margin-top: 20px;
 `;
 
 export const Input = styled.input`

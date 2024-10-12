@@ -83,6 +83,9 @@ export const NewsItem = styled.div`
    @media (max-width: 600px){
       font-size: 15px;
    }
+   @media (max-width: 1280px){
+      font-size: 10px;
+   }
   }
 
   &:hover {

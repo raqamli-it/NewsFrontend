@@ -23,7 +23,7 @@ export const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 90%;
   margin: 0 auto;
 
   @media (max-width: 690px) {
@@ -153,8 +153,8 @@ export const SearchInput = styled.input`
 
 // Logo image styles
 export const Logoss = styled.img`
-  width: 200px;
-  height: 200px !important;
+  width: 100px;
+  height: 100px !important;
   margin-right: 20px;
 `;
 
