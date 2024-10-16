@@ -5,7 +5,7 @@ import Contents from "../pages/contents/Contents";
 import Login from "../pages/login/Login";
 import Register from "../pages/Register/Register";
 
-export const data = [
+export const dataa = [
   {
     id: 1,
     title: 'Sud',

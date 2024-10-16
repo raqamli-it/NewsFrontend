@@ -4,6 +4,7 @@ export const Container = styled.div`
   max-width: 1500px;
   margin: 0 auto;
   padding: 20px;
+
 `;
 
 export const Title = styled.h1`
@@ -42,7 +43,7 @@ export const ContentWrapper = styled.div`
     width: 100%;
     text-align: right;
     font-size: 16px;
-
+  
   }
 `;
 export const UpperContentWrapper = styled.div`
@@ -139,6 +140,7 @@ export const Form = styled.form`
   flex-direction: column;
   gap: 15px;
   margin-bottom: 20px;
+  margin-top: 20px;
 `;
 
 export const Input = styled.input`

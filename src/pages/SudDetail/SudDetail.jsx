@@ -23,49 +23,59 @@ const SudDetail = ({ language }) => {
   const [commentsVisible, setCommentsVisible] = useState(false); // State for toggling comments visibility
 
   // Get registered user's name from localStorage
+  const userName = localStorage.getItem("userName") || "Guest";
 
   // Function to handle comment submission
-  // Function to handle comment submission
-  const handleCommentSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+// Function to handle comment submission
+const handleCommentSubmit = async (e) => {
+  e.preventDefault(); // Prevent default form submission
 
-    const newComment = { comment }; // Include user name with the comment
-
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/sud/${id}/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json", // Send data in JSON format
-          },
-          body: JSON.stringify(newComment), // Send the comment in JSON format
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error(
-          "Error submitting comment:",
-          response.statusText,
-          errorData
-        );
-        setErrorMsg(
-          `Error submitting comment: ${
-            errorData.detail || "Please check your input."
-          }`
-        );
-      } else {
-        const updatedData = await response.json();
-        setComments((prevComments) => [...prevComments, updatedData]); // Add the new comment to the list
-        setComment(""); // Clear the input
-        setErrorMsg(null); // Clear error message
-      }
-    } catch (err) {
-      console.error("An error occurred:", err);
-      setErrorMsg("An error occurred. Please try again later.");
-    }
+  // Include user name with the comment
+  const newComment = {
+    comment,
+    full_name: userName, // Include user name in the comment
   };
+
+  // Get the token from localStorage
+  const token = localStorage.getItem("access_token");
+
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/sud/${id}/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Send data in JSON format
+          Authorization: `Bearer ${token}`, // Include token in Authorization header
+        },
+        body: JSON.stringify(newComment), // Send the comment in JSON format
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error(
+        "Error submitting comment:",
+        response.statusText,
+        errorData
+      );
+      setErrorMsg(
+        `Error submitting comment: ${
+          errorData.detail || "Please check your input."
+        }`
+      );
+    } else {
+      const updatedData = await response.json();
+      setComments((prevComments) => [...prevComments, updatedData]); // Add the new comment to the list
+      setComment(""); // Clear the input
+      setErrorMsg(null); // Clear error message
+    }
+  } catch (err) {
+    console.error("An error occurred:", err);
+    setErrorMsg("An error occurred. Please try again later.");
+  }
+};
+
 
   // Update comments state when data changes
   useEffect(() => {
@@ -130,7 +140,6 @@ const SudDetail = ({ language }) => {
           ></p>
 
           {/* Comment submission form */}
-
           {/* Comment icon to toggle visibility */}
           <CommentIcon onClick={toggleCommentsVisibility}>
             Comments 🗨️{" "}

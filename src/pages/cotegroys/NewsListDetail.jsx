@@ -1,3 +1,4 @@
+// src/pages/categories/NewsListDetail.js
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
@@ -11,11 +12,11 @@ import {
   ErrorMessage,
   CommentIcon,
   Title,
-} from "./styled";
+} from "./detailstyle";
 
-const SudDetail = ({ language }) => {
+const NewsListDetail = ({ language }) => {
   const { id } = useParams();
-  const { data, loading, error } = useFetch(`/jurnalistik/${id}/`); // Fetch data from API
+  const { data, loading, error, refetch } = useFetch(`/news/${id}/`); // Fetch data from API
   const [comment, setComment] = useState(""); // State for new comment input
   const [comments, setComments] = useState([]); // State for fetched comments
   const [errorMsg, setErrorMsg] = useState(null); // State for error messages
@@ -26,56 +27,59 @@ const SudDetail = ({ language }) => {
   const userName = localStorage.getItem("userName") || "Guest";
 
   // Function to handle comment submission
-// Function to handle comment submission
-const handleCommentSubmit = async (e) => {
-  e.preventDefault(); // Prevent default form submission
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
 
-  // Include user name with the comment
-  const newComment = {
-    comment,
-    full_name: userName, // Include user name in the comment
-  };
-
-  // Get the token from localStorage
-  const token = localStorage.getItem("access_token");
-
-  try {
-    const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/jurnalistik/${id}/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Send data in JSON format
-          Authorization: `Bearer ${token}`, // Include token in Authorization header
-        },
-        body: JSON.stringify(newComment), // Send the comment in JSON format
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error(
-        "Error submitting comment:",
-        response.statusText,
-        errorData
-      );
-      setErrorMsg(
-        `Error submitting comment: ${
-          errorData.detail || "Please check your input."
-        }`
-      );
-    } else {
-      const updatedData = await response.json();
-      setComments((prevComments) => [...prevComments, updatedData]); // Add the new comment to the list
-      setComment(""); // Clear the input
-      setErrorMsg(null); // Clear error message
+    if (!comment.trim()) {
+      setErrorMsg("Komentariyani to'ldiring.");
+      return;
     }
-  } catch (err) {
-    console.error("An error occurred:", err);
-    setErrorMsg("An error occurred. Please try again later.");
-  }
-};
 
+    // Include user name with the comment
+    const newComment = {
+      comment,
+      full_name: userName, // Include user name in the comment
+    };
+
+    // Get the token from localStorage
+    const token = localStorage.getItem("access_token");
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/news/${id}/`, // API endpoint yangilik komentariyalar uchun
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Send data in JSON format
+            Authorization: `Bearer ${token}`, // Include token in Authorization header
+          },
+          body: JSON.stringify(newComment), // Send the comment in JSON format
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error(
+          "Error submitting comment:",
+          response.statusText,
+          errorData
+        );
+        setErrorMsg(
+          `Error submitting comment: ${
+            errorData.detail || "Please check your input."
+          }`
+        );
+      } else {
+        const updatedData = await response.json();
+        setComments((prevComments) => [...prevComments, updatedData]); // Add the new comment to the list
+        setComment(""); // Clear the input
+        setErrorMsg(null); // Clear error message
+      }
+    } catch (err) {
+      console.error("An error occurred:", err);
+      setErrorMsg("An error occurred. Please try again later.");
+    }
+  };
 
   // Update comments state when data changes
   useEffect(() => {
@@ -110,7 +114,7 @@ const handleCommentSubmit = async (e) => {
           <ContentWrapper>
             <Title>{title}</Title>
             <small>{time}</small>
-            <small> view: 👁️‍🗨️{data.view_count}</small>
+            <small> 👁️‍🗨️ {data.view_count}</small>
           </ContentWrapper>
           <VideoSection>
             {data.link ? (
@@ -139,11 +143,9 @@ const handleCommentSubmit = async (e) => {
             }}
           ></p>
 
-          {/* Comment submission form */}
           {/* Comment icon to toggle visibility */}
           <CommentIcon onClick={toggleCommentsVisibility}>
-            Comments 🗨️{" "}
-            {/* Replace this with an actual icon component if available */}
+            Comments 🗨️
           </CommentIcon>
 
           {/* Comments section */}
@@ -186,4 +188,4 @@ const handleCommentSubmit = async (e) => {
   );
 };
 
-export default SudDetail;
+export default NewsListDetail;

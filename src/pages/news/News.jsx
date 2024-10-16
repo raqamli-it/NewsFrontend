@@ -18,7 +18,7 @@ import {
   SectionTitle // Adding styled component for section title
 } from './styled';
 
-const Jurnalist = ({ language }) => {
+const Home = ({ language }) => {
   const { data, loading, error } = useFetch(`/yangilik_sub/?lang=${language}`);
   const [visibleCards, setVisibleCards] = useState(3); // Start with 3 visible cards
 
@@ -101,4 +101,4 @@ const Jurnalist = ({ language }) => {
   );
 };
 
-export default Jurnalist;
+export default Home;

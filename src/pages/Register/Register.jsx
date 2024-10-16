@@ -26,7 +26,7 @@ const Register = () => {
         body: JSON.stringify({
           full_name: nom,
           password: parol,
-          password2: password2,
+          password2: password2,  // Parolni tasdiqlash kiritilishi kerak
           phone: telefon,
         }),
       });
@@ -70,6 +70,7 @@ const Register = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+
         <Input
           type="text"
           placeholder="Telefon raqamingiz"

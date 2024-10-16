@@ -1,51 +1,46 @@
+// src/components/Navbar/Navbar.js
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Container, Wrapper, NavItems, NavButton, RightSection, SearchInput, Logoss, LanguageSelect, Dropdown, HamburgerIcon, MobileMenu } from './styled'; // Import hamburger styled components
-import DropdownItem from '../cotegroys/Dropdown'; 
-import Logos from '../../assets/logo.png'; 
-import { auth } from '../login/firebase'; 
-import { signOut } from 'firebase/auth'; 
-import useFetch from "../../hooks/useFetch";
+import {
+  Container,
+  Wrapper,
+  NavItems,
+  NavButton,
+  RightSection,
+  SearchInput,
+  Logoss,
+  LanguageSelect,
+  Dropdown,
+  HamburgerIcon,
+  MobileMenu,
+} from "./styled";
+import DropdownItem from "../cotegroys/Dropdown"; // To'g'ri yo'lni tekshiring
+import Logos from "../../assets/logo.png"; // Logotip rasmi
+import { auth } from "../login/firebase"; // Firebase autentifikatsiya
+import { signOut } from "firebase/auth"; // Logout uchun
+import useFetch from "../../hooks/useFetch"; // API uchun hook
 
-const Navbar = ({ user, setUser, onLanguageChange }) => {
+const Navbar = ({ user, setUser, onLanguageChange, onSelectCategory }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); 
-  const [menuOpen, setMenuOpen] = useState(false); // State for hamburger menu
-  const navigate = useNavigate(); 
-  const { data: newsArticles, loading, error } = useFetch('/category/');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { data: categories, loading, error } = useFetch("/category/");
+  const userName = localStorage.getItem("userName") || "User";
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
       setUser(null);
-      navigate('/login');
-      localStorage.clear();
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('userName');
+      navigate("/register");
     } catch (error) {
-      console.error('Logout muvaffaqiyatsiz:', error);
+      console.error("Logout failed:", error);
     }
   };
 
-  const handleLanguageChange = (e) => {
-    const selectedLanguage = e.target.value;
-    onLanguageChange(selectedLanguage);
-  };
-
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-    // Only close the main menu if the dropdown is closed (dropdownOpen becomes false)
-    if (dropdownOpen) {
-      setMenuOpen(false);
-    }
-  };
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen); // Toggle menu state
-  };
-
-  const handleSearchInputChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-  const name =localStorage.getItem('userName')
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -53,48 +48,53 @@ const Navbar = ({ user, setUser, onLanguageChange }) => {
     }
   };
 
+  const handleCategorySelect = (category) => {
+    onSelectCategory(category); // Kategoriya holatini yangilash
+    navigate(`/news?category=${encodeURIComponent(category)}`); // URL-ni yangilash
+    setDropdownOpen(false);
+    setMenuOpen(false);
+  };
+
   return (
     <Container>
       <Wrapper>
         <NavLink to="/">
-          <Logoss src={Logos} alt="Logo" /> 
+          <Logoss src={Logos} alt="Logo" />
         </NavLink>
 
-        {/* Search input form */}
         <form onSubmit={handleSearchSubmit}>
-          <SearchInput 
-            type="text" 
-            value={searchQuery} 
-            onChange={handleSearchInputChange} 
-            placeholder="Qidiruv..." 
+          <SearchInput
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search..."
           />
         </form>
-
-        {/* Hamburger menu icon */}
-        
       </Wrapper>
 
       <Wrapper>
-        
-        <NavItems className={menuOpen ? "open" : ""}> {/* Show menu if open */}
-          <NavLink exact to="/sud">Sud</NavLink>
+        <NavItems className={menuOpen ? "open" : ""}>
+          <NavLink to="/sud">Sud</NavLink>
           <NavLink to="/jurnalistik">Jurnalistik Jamiyat</NavLink>
           <NavLink to="/yangiliklar">Yangiliklar</NavLink>
-          <div onMouseEnter={toggleDropdown} onMouseLeave={toggleDropdown}>
-            <NavLink to="#">News</NavLink> 
+          <div
+            onMouseEnter={() => setDropdownOpen(true)}
+            onMouseLeave={() => setDropdownOpen(false)}
+          >
+            <NavLink to="/news">News</NavLink>
             {dropdownOpen && (
               <Dropdown>
                 {loading ? (
                   <div>Loading...</div>
                 ) : error ? (
-                  <div>Error loading news</div>
+                  <div>Error occurred</div>
                 ) : (
-                  newsArticles.map((article) => (
-                    <DropdownItem 
-                      key={article.id}
-                      id={article.id}
-                      title={article.name_uz} 
-                      onClick={toggleDropdown}
+                  categories.map((cat) => (
+                    <DropdownItem
+                      key={cat.id}
+                      id={cat.id}
+                      title={cat.name_uz}
+                      onClick={() => handleCategorySelect(cat.name_uz)} // Kategoriya tanlash
                     />
                   ))
                 )}
@@ -103,49 +103,61 @@ const Navbar = ({ user, setUser, onLanguageChange }) => {
           </div>
         </NavItems>
 
-        <RightSection className={menuOpen ? "open" : ""}> 
-        <HamburgerIcon onClick={toggleMenu}>
-          ☰ {/* Hamburger icon */}
-        </HamburgerIcon>{/* Show RightSection if menuOpen */}
-          <LanguageSelect onChange={handleLanguageChange}>
+        <RightSection className={menuOpen ? "open" : ""}>
+          <HamburgerIcon onClick={() => setMenuOpen(!menuOpen)}>
+            ☰
+          </HamburgerIcon>
+          <LanguageSelect onChange={(e) => onLanguageChange(e.target.value)} value={localStorage.getItem("language") || "uz"}>
             <option value="uz">Uzbek</option>
             <option value="ru">Russian</option>
-          </LanguageSelect> 
+          </LanguageSelect>
+
           {user ? (
             <>
-              <span style={{ marginRight: '10px', marginTop: '7px'}}>Xush kelibsiz, {name}</span>
-              <NavButton onClick={handleLogout}>Logout</NavButton>
+              <span style={{ marginRight: "10px", marginTop:'8px' }}>
+                Welcome, {user.full_name}
+              </span>
+              <NavButton as="button" onClick={handleLogout}>Logout</NavButton>
             </>
           ) : (
             <>
-              <NavButton to="/login">Kirish</NavButton>
-              <NavButton to="/register">Ro'yxatdan o'tish</NavButton>
+              <NavButton as={NavLink} to="/login">Login</NavButton>
+              <NavButton as={NavLink} to="/register">Register</NavButton>
             </>
           )}
         </RightSection>
       </Wrapper>
 
-      {/* Mobile menu */}
       {menuOpen && (
         <MobileMenu>
-          <NavLink exact to="/sud" onClick={toggleMenu}>Sud</NavLink>
-          <NavLink to="/jurnalistik" onClick={toggleMenu}>Jurnalistik Jamiyat</NavLink>
-          <NavLink to="/yangiliklar" onClick={toggleMenu}>Yangiliklar</NavLink>
-          <div className="NewsNavDrp" onClick={toggleDropdown}  >
-            <NavLink to="#">News</NavLink> 
+          <NavLink to="/sud" onClick={() => setMenuOpen(false)}>
+            Sud
+          </NavLink>
+          <NavLink to="/jurnalistik" onClick={() => setMenuOpen(false)}>
+            Jurnalistik Jamiyat
+          </NavLink>
+          <NavLink to="/yangiliklar" onClick={() => setMenuOpen(false)}>
+            Yangiliklar
+          </NavLink>
+          <div
+            className="NewsNavDrp"
+            onMouseEnter={() => setDropdownOpen(true)}
+            onMouseLeave={() => setDropdownOpen(false)}
+          >
+            <NavLink to="/news">News</NavLink>
             {dropdownOpen && (
               <Dropdown>
                 {loading ? (
                   <div>Loading...</div>
                 ) : error ? (
-                  <div>Error loading news</div>
+                  <div>Error occurred</div>
                 ) : (
-                  newsArticles.map((article) => (
-                    <DropdownItem 
-                      key={article.id}
-                      id={article.id}
-                      title={article.title_uz} 
-                      onClick={toggleDropdown}
+                  categories.map((cat) => (
+                    <DropdownItem
+                      key={cat.id}
+                      id={cat.id}
+                      title={cat.name_uz}
+                      onClick={() => handleCategorySelect(cat.name_uz)} // Kategoriya tanlash
                     />
                   ))
                 )}
