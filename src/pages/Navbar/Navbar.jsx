@@ -81,7 +81,7 @@ const Navbar = ({ user, setUser, onLanguageChange, onLogout }) => {
             onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
           >
-            <NavLink to="/news">News</NavLink>
+            <NavLink to="#">News</NavLink>
             {dropdownOpen && (
               <Dropdown>
                 {loading ? (
@@ -147,7 +147,7 @@ const Navbar = ({ user, setUser, onLanguageChange, onLogout }) => {
             onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
           >
-            <NavLink to="/news">News</NavLink>
+            <NavLink to="#">News</NavLink>
             {dropdownOpen && (
               <Dropdown>
                 {loading ? (
