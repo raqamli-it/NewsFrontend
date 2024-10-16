@@ -14,21 +14,21 @@ import {
   HamburgerIcon,
   MobileMenu,
 } from "./styled";
-import DropdownItem from "../cotegroys/Dropdown"; // To'g'ri yo'lni tekshiring
-import Logos from "../../assets/logo.png"; // Logotip rasmi
-import { auth } from "../login/firebase"; // Firebase autentifikatsiya
-import { signOut } from "firebase/auth"; // Logout uchun
-import useFetch from "../../hooks/useFetch"; // API uchun hook
+import DropdownItem from "../cotegroys/Dropdown"; // Ensure correct path
+import Logos from "../../assets/logo.png"; // Logo image
+import { auth } from "../login/firebase"; // Firebase authentication
+import { signOut } from "firebase/auth"; // Logout function
+import useFetch from "../../hooks/useFetch"; // Custom fetch hook
 
-const Navbar = ({ user, setUser, onLanguageChange, onSelectCategory }) => {
+const Navbar = ({ user, setUser, onLanguageChange, onLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { data: categories, loading, error } = useFetch("/category/");
-  const userName = localStorage.getItem("userName") || "User";
+  // const userName = localStorage.getItem("userName") || "User";
 
-  const handleLogout = async () => {
+  const handleLogoutClick = async () => {
     try {
       await signOut(auth);
       setUser(null);
@@ -44,13 +44,13 @@ const Navbar = ({ user, setUser, onLanguageChange, onSelectCategory }) => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?query=${searchQuery.trim()}`);
+      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
   const handleCategorySelect = (category) => {
-    onSelectCategory(category); // Kategoriya holatini yangilash
-    navigate(`/news?category=${encodeURIComponent(category)}`); // URL-ni yangilash
+    // Directly navigate to the URL with the selected category as a query parameter
+    navigate(`/news?category=${encodeURIComponent(category)}`);
     setDropdownOpen(false);
     setMenuOpen(false);
   };
@@ -94,7 +94,7 @@ const Navbar = ({ user, setUser, onLanguageChange, onSelectCategory }) => {
                       key={cat.id}
                       id={cat.id}
                       title={cat.name_uz}
-                      onClick={() => handleCategorySelect(cat.name_uz)} // Kategoriya tanlash
+                      onClick={() => handleCategorySelect(cat.name_uz)} // Directly handle category selection
                     />
                   ))
                 )}
@@ -107,17 +107,20 @@ const Navbar = ({ user, setUser, onLanguageChange, onSelectCategory }) => {
           <HamburgerIcon onClick={() => setMenuOpen(!menuOpen)}>
             ☰
           </HamburgerIcon>
-          <LanguageSelect onChange={(e) => onLanguageChange(e.target.value)} value={localStorage.getItem("language") || "uz"}>
+          <LanguageSelect
+            onChange={(e) => onLanguageChange(e.target.value)}
+            value={localStorage.getItem("language") || "uz"}
+          >
             <option value="uz">Uzbek</option>
             <option value="ru">Russian</option>
           </LanguageSelect>
 
           {user ? (
             <>
-              <span style={{ marginRight: "10px", marginTop:'8px' }}>
+              <span style={{ marginRight: "10px", marginTop: '8px' }}>
                 Welcome, {user.full_name}
               </span>
-              <NavButton as="button" onClick={handleLogout}>Logout</NavButton>
+              <NavButton as="button" onClick={handleLogoutClick}>Logout</NavButton>
             </>
           ) : (
             <>
@@ -157,7 +160,7 @@ const Navbar = ({ user, setUser, onLanguageChange, onSelectCategory }) => {
                       key={cat.id}
                       id={cat.id}
                       title={cat.name_uz}
-                      onClick={() => handleCategorySelect(cat.name_uz)} // Kategoriya tanlash
+                      onClick={() => handleCategorySelect(cat.name_uz)} // Directly handle category selection
                     />
                   ))
                 )}

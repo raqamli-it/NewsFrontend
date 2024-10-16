@@ -1,6 +1,6 @@
 // src/components/Root.js
 import React, { useEffect, useState } from "react";
-import { Route, Routes, Navigate, useLocation } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Navbar from "../pages/Navbar/Navbar";
 import NewsList from "../pages/cotegroys/NewsList";
 import SudDetail from "../pages/SudDetail/SudDetail";
@@ -9,18 +9,11 @@ import Register from "../pages/Register/Register";
 import JurnalistDetal from "../pages/JurnalistikDetail/JurnalistikDetal";
 import NewsDetail from "../pages/NewsDetal/NewsDetail";
 import NewsListDetail from '../pages/cotegroys/NewsListDetail';
-import useFetch from "../hooks/useFetch"; // Fetch hook
-import {dataa} from '../utils/navbar'
+import { dataa } from '../utils/navbar'; // Ensure 'dataa' is correctly imported
 
 function Root() {
   const [user, setUser] = useState(null);
   const [language, setLanguage] = useState(localStorage.getItem("language") || 'uz');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  
-  // Fetch barcha yangiliklar
-  const { data: newsData, loading: newsLoading, error: newsError } = useFetch(`/news/?lang=${language}`);
-
-  const location = useLocation();
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
@@ -31,10 +24,8 @@ function Root() {
   }, []);
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const category = queryParams.get('category') || '';
-    setSelectedCategory(category);
-  }, [location.search]);
+    localStorage.setItem("language", language);
+  }, [language]);
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
@@ -47,14 +38,6 @@ function Root() {
     setLanguage(newLanguage);
   };
 
-  // Kategoriya asosida yangiliklarni filtrlash
-  const filteredNews = selectedCategory
-    ? newsData.filter(news => news.category.name_uz === selectedCategory)
-    : newsData;
-
-  if (newsLoading) return <p>Loading news...</p>;
-  if (newsError) return <p>Error loading news: {newsError.message}</p>;
-
   return (
     <>
       <Navbar
@@ -62,29 +45,28 @@ function Root() {
         user={user}
         setUser={setUser}
         onLogout={handleLogout} 
-        onSelectCategory={setSelectedCategory} // Kategoriya tanlash handler
+        // Removed onSelectCategory
       />
       <Routes>
-        {/* Asosiy yangiliklar ro'yxati */}
+        {/* Main News List */}
         <Route
           path="/news"
-          element={<NewsList language={language} news={filteredNews} />}
+          element={<NewsList language={language} />}
         />
-        {/* Yangilik detallari */}
+        {/* News Details */}
         <Route path="/news/:id" element={<NewsListDetail language={language} />} />
-        {/* Boshqa sahifalar */}
+        {/* Other Pages */}
         <Route path="/yangilik_sub/:id" element={<NewsDetail language={language} />} />
         <Route path="/sud/:id" element={<SudDetail userA={user} language={language} />} />
         <Route path="/jurnalistik/:id" element={<JurnalistDetal language={language} />} />
         <Route path="/" element={<Navigate to="/sud" replace />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={<Register />} />
-        {/* Dynamic yo'nalishlar, agar mavjud bo'lsa */}
-        {/* data.map(...): Bu yerda 'data' obyektining aniqlanishi kerak */}
+        {/* Dynamic Routes */}
         {dataa.map((item) => (
           <Route key={item.id} path={item.path} element={<item.Component language={language} />} />
         ))}
-        {/* 404 sahifasi, agar kerak bo'lsa */}
+        {/* 404 Page */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

@@ -16,7 +16,7 @@ import {
 
 const NewsListDetail = ({ language }) => {
   const { id } = useParams();
-  const { data, loading, error, refetch } = useFetch(`/news/${id}/`); // Fetch data from API
+  const { data, loading, error } = useFetch(`/news/${id}/`); // Fetch data from API
   const [comment, setComment] = useState(""); // State for new comment input
   const [comments, setComments] = useState([]); // State for fetched comments
   const [errorMsg, setErrorMsg] = useState(null); // State for error messages
