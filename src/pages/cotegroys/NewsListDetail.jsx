@@ -1,6 +1,6 @@
 // src/pages/categories/NewsListDetail.js
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import {
   Container,
@@ -25,7 +25,7 @@ const NewsListDetail = ({ language }) => {
 
   // Get registered user's name from localStorage
   const userName = localStorage.getItem("userName") || "Guest";
-
+  const navigate =useNavigate()
   // Function to handle comment submission
   const handleCommentSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
@@ -95,7 +95,12 @@ const NewsListDetail = ({ language }) => {
 
   // Toggle comments visibility
   const toggleCommentsVisibility = () => {
-    setCommentsVisible((prev) => !prev); // Toggle visibility
+    const token1 =localStorage.getItem('access_token')
+    if (token1) {
+      setCommentsVisible((prev) => !prev); // Toggle visibility if token is present
+    } else {
+      navigate("/register"); // Redirect to register page if no token
+    }
   };
 
   if (loading) return <p>Loading...</p>; // Show loading state
