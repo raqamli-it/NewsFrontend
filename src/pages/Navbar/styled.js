@@ -180,8 +180,8 @@ export const Dropdown = styled.div`
   background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 1000;
-  width: 200px;
-
+  width: 300px;
+  overflow-y: auto;
   @media (max-width: 690px) {
     position: static;
     width: 100%;
