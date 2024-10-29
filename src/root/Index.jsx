@@ -10,7 +10,7 @@ import JurnalistDetal from "../pages/JurnalistikDetail/JurnalistikDetal";
 import NewsDetail from "../pages/NewsDetal/NewsDetail";
 import NewsListDetail from '../pages/cotegroys/NewsListDetail';
 import { dataa } from '../utils/navbar'; // Ensure 'dataa' is correctly imported
-import Footer from "../pages/Footer/Footer";
+import Footer  from "../pages/Footer/Footer";
 function Root() {
   const [user, setUser] = useState(null);
   const [language, setLanguage] = useState(localStorage.getItem("language") || 'uz');
